@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDR Spend Grand Prix – Q2 2026</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d0d0d; color: #fff; min-height: 100vh; }
+
+.header {
+  background: repeating-conic-gradient(#111 0% 25%, #1a1a1a 0% 50%) 0 0 / 20px 20px;
+  padding: 22px 20px 16px;
+  border-bottom: 3px solid #b5ff3a;
+}
+.header-inner { max-width: 860px; margin: 0 auto; }
+.header h1 { font-size: 22px; font-weight: 800; color: #b5ff3a; }
+.header h1 span { color: #fff; }
+.header p { font-size: 12px; color: #666; margin-top: 3px; }
+.header-meta { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.badge { background: #1e1e1e; border: 1px solid #333; border-radius: 20px; padding: 3px 10px; font-size: 11px; color: #aaa; }
+.badge strong { color: #b5ff3a; }
+.ts { font-size: 11px; color: #444; margin-left: auto; }
+
+.rules-bar { background: #111; border-bottom: 1px solid #1e1e1e; padding: 8px 20px; }
+.rules-bar ul { max-width: 860px; margin: 0 auto; display: flex; gap: 20px; list-style: none; flex-wrap: wrap; }
+.rules-bar li { font-size: 11px; color: #555; }
+.rules-bar li strong { color: #b5ff3a; }
+
+.tabs { background: #111; border-bottom: 1px solid #1e1e1e; padding: 0 20px; }
+.tabs ul { max-width: 860px; margin: 0 auto; display: flex; list-style: none; }
+.tabs li { padding: 11px 18px; font-size: 13px; font-weight: 600; cursor: pointer; color: #555; border-bottom: 3px solid transparent; transition: all 0.15s; user-select: none; }
+.tabs li:hover { color: #999; }
+.tabs li.active { color: #b5ff3a; border-bottom-color: #b5ff3a; }
+
+.content { max-width: 860px; margin: 0 auto; padding: 20px; }
+
+.region-panel { display: none; }
+.region-panel.active { display: block; }
+
+/* Prize row */
+.prizes { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.prize { background: #161616; border: 1px solid #2a2a2a; border-radius: 8px; padding: 10px; text-align: center; }
+.prize .amt { font-size: 18px; font-weight: 800; }
+.prize:nth-child(1) .amt { color: #FFD700; }
+.prize:nth-child(2) .amt { color: #C0C0C0; }
+.prize:nth-child(3) .amt { color: #CD7F32; }
+.prize .pos { font-size: 10px; color: #555; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Podium */
+.podium { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+.card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 18px 12px; text-align: center; }
+.card.gold   { border-color: #FFD700; background: linear-gradient(150deg, #1d1a00, #1a1a1a); }
+.card.silver { border-color: #C0C0C0; background: linear-gradient(150deg, #1a1a1a, #202020); }
+.card.bronze { border-color: #CD7F32; background: linear-gradient(150deg, #1a0e00, #1a1a1a); }
+.card.empty  { opacity: 0.2; }
+.c-rank  { font-size: 28px; margin-bottom: 6px; }
+.c-name  { font-size: 13px; font-weight: 700; line-height: 1.3; }
+.c-type  { font-size: 10px; color: #555; margin-top: 3px; }
+.c-lbl   { font-size: 9px; color: #555; text-transform: uppercase; letter-spacing: 0.4px; margin-top: 10px; }
+.c-spend { font-size: 20px; font-weight: 800; color: #b5ff3a; margin: 3px 0; }
+.c-pct   { font-size: 16px; font-weight: 700; margin-top: 3px; }
+.card.gold   .c-pct { color: #FFD700; }
+.card.silver .c-pct { color: #C0C0C0; }
+.card.bronze .c-pct { color: #CD7F32; }
+.etag { display: inline-block; font-size: 9px; padding: 2px 7px; border-radius: 10px; margin-top: 8px; font-weight: 600; }
+.e-ok   { background: #1a3300; color: #b5ff3a; border: 1px solid #2d5500; }
+.e-pend { background: #1a1700; color: #ffaa00; border: 1px solid #333000; }
+
+/* Table */
+.sec-lbl { font-size: 11px; font-weight: 600; color: #444; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+table { width: 100%; border-collapse: collapse; }
+th { font-size: 10px; font-weight: 600; color: #444; text-transform: uppercase; letter-spacing: 0.5px; text-align: left; padding: 7px 10px; border-bottom: 1px solid #1e1e1e; }
+td { padding: 9px 10px; border-bottom: 1px solid #141414; font-size: 12px; vertical-align: middle; }
+tr:hover td { background: #131313; }
+.r { color: #555; font-weight: 700; width: 28px; }
+.nm { font-weight: 600; }
+.nm small { display: block; font-size: 10px; color: #444; font-weight: 400; margin-top: 1px; }
+.bar-wrap { display: flex; align-items: center; gap: 7px; }
+.bar { background: #222; border-radius: 3px; height: 5px; flex: 1; min-width: 60px; }
+.bar-fill { height: 100%; border-radius: 3px; background: #b5ff3a; }
+.pv { font-size: 12px; color: #b5ff3a; font-weight: 700; min-width: 42px; text-align: right; }
+.dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.dot.ok   { background: #b5ff3a; }
+.dot.pend { background: #ffaa00; }
+
+.note { background: #111; border: 1px solid #1e1e1e; border-radius: 8px; padding: 12px 14px; margin-top: 20px; font-size: 10px; color: #444; line-height: 1.7; }
+.note strong { color: #666; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <h1>🏁 SDR Spend Grand Prix <span>– Q2 2026</span></h1>
+    <p>Ranking by Spend EAR as % of EAR target · Launchpad excluded</p>
+    <div class="header-meta">
+      <div class="badge">🏆 Pot: <strong>€8,000</strong> · €2,000 / region</div>
+      <div class="badge">📅 Q2: <strong>Apr 1 – Jun 30, 2026</strong></div>
+      <div class="ts">⏰ Data: Jun 3, 2026 · Ask Laura to refresh</div>
+    </div>
+  </div>
+</div>
+
+<div class="rules-bar">
+  <ul>
+    <li>🎯 <strong>Ranking:</strong> Spend EAR ÷ total EAR target</li>
+    <li>✅ <strong>Eligibility:</strong> &gt;100% total EAR at EOQ</li>
+    <li>🔗 <strong>Rule:</strong> Min. 50% attached rate</li>
+    <li>🚀 <strong>Launchpad excluded</strong> · Pod-SDRs: individual CIQ only</li>
+  </ul>
+</div>
+
+<div class="tabs">
+  <ul id="tabs">
+    <li class="active" onclick="show('dach',0)">🇩🇪 DACH</li>
+    <li onclick="show('uki',1)">🇬🇧 UKI</li>
+    <li onclick="show('growth',2)">🌱 Growth</li>
+    <li onclick="show('scu',3)">🌍 SCU</li>
+  </ul>
+</div>
+
+<div class="content">
+  <div id="dach"   class="region-panel active"></div>
+  <div id="uki"    class="region-panel"></div>
+  <div id="growth" class="region-panel"></div>
+  <div id="scu"    class="region-panel"></div>
+
+  <div class="note">
+    <strong>Methodology:</strong> Ranking = Spend EAR pipeline generated (Q2 Apr–Jun) ÷ Q2 EAR pipeline target from 2026 Benchmark spreadsheet. Data from Salesforce Opportunity Teams (role: Opportunity Qualifier), pulled Jun 3 2026. UKI targets converted GBP × 1.1739 for EUR-equivalent comparison. ✅ eligible = currently tracking &gt;100% total EAR (final check at EOQ Jun 30). Attached rate (≥50%) verified separately. Launchpad team SDRs excluded.
+  </div>
+</div>
+
+<script>
+// ── DATA: [name, type, spendEAR (€ equiv), totalEAR (€ equiv), Q2 target (€)]
+// Spend EAR from Salesforce OpportunityTeamMember (Opportunity Qualifier role, Q2 2026)
+// Targets from 2026 Benchmark spreadsheet, Q2 columns, converted to EUR
+const DATA = {
+  dach: [
+    ['Justin Dridiger',     'SSDR · Regional',    448140,  2769221, 892305],
+    ['Alina Nader',         'SSDR · Regional',    282300,  1122748, 892305],
+    ['Leonardo Apollonio',  'SSDR · Regional',    265080,  501916,  892305],
+    ['Alisa Flick',         'SSDR · Regional',    183016,  985424,  892305],
+    ['Lisa Zirkelbach',     'SSDR · Regional',    148470,  1819517, 892305],
+    ['Nike Tuchelt',        'SDR · Regional',     66720,   331658,  558096],
+    ['Andreas Holl',        'SDR · Regional',     54163,   251314,  558096],
+    ['Sandy Köppe',         'SDR · Regional',     53363,   432193,  558096],
+    ['Nick Czorniczek',     'SDR · Regional',     53220,   377909,  558096],
+    ['Ella Karacic',        'SDR · Regional',     53160,   496161,  558096],
+    ['Simon Goeres',        'SDR · Regional',     39810,   180412,  558096],
+    ['Magdalena Rölle',     'SDR · Regional',     33060,   263527,  558096],
+    ['Viktor Dietrich',     'SDR · Regional',     30240,   207850,  558096],
+  ],
+  uki: [
+    ['Carl Mitchell',       'SSDR · Regional',    290270,  507147,  747154],
+    ['Naoise Stack',        'SDR · Regional',     121289,  592685,  519871],
+    ['Brian Crowe',         'SSDR · Regional',    103117,  376824,  747154],
+    ['Philip Kane',         'SDR · Regional',     40570,   368942,  519871],
+    ['Thomas Slater',       'SDR · Regional',     19534,   101637,  519871],
+    ['Rachel Lyons',        'SSDR · Regional',    11833,   796498,  747154],
+    ['Adam Hendricken',     'SDR · Regional',     10143,   283773,  519871],
+    ['David Brust',         'SSDR · Regional',    10143,   641949,  747154],
+  ],
+  growth: [
+    ['Diego Servin',        'SDR · Regional',     129689,  347280,  496757],
+    ['Roberto Torre',       'SDR · Regional',     76560,   512214,  496757],
+    ['Gabriella Cuccurullo','SSDR · Regional',    67887,   714924,  722030],
+    ['Izan Fano Runge',     'SSDR · Regional',    40137,   415027,  722030],
+    ['Joana Carvalho',      'SDR · Regional',     32515,   456165,  496757],
+    ['Francisco Lacerda',   'SDR · Regional',     31680,   553677,  496757],
+    ['Luca Frachea',        'SDR · Regional',     21540,   234107,  496757],
+  ],
+  scu: [
+    ['Philémon Courcoux',        'SSDR · Regional · FR',    360994, 1362309, 691600],
+    ['Màxim Graveleau',          'SDR · Regional · IB',     104460, 883188,  480662],
+    ['Siem Schoenaker',          'SDR · Regional · BNX',    81240,  637709,  530236],
+    ['Emma González',            'SDR · Regional · IB',     73380,  737203,  480662],
+    ['Riccardo Scussat',         'SDR · Regional · IB',     64140,  288697,  480662],
+    ['Quim Benavent',            'SDR · Regional · IB',     55920,  337601,  480662],
+    ['Antony De Stefano',        'SDR · Regional · FR',     36570,  141298,  480662],
+    ['Mar Gispert',              'SDR · Regional · IB',     28800,  427685,  480662],
+    ['Eline Dumortier',          'SDR · Regional · BNX',    21540,  438481,  530236],
+    ['Alejandro Egea',           'SDR · Regional · IB',     11520,  675014,  480662],
+    ['Tamás Egbring',            'SDR · Regional · BNX',    17220,  82617,   530236],
+    ['Isabelle van der Linden',  'SSDR · Regional · BNX',   12960,  252619,  762930],
+    ['Ilyes Heintze',            'SDR · Regional · BNX',    11520,  37784,   530236],
+  ],
+};
+
+function fmtEUR(n) {
+  if (n >= 1000000) return '€' + (n/1000000).toFixed(2) + 'M';
+  if (n >= 1000)    return '€' + Math.round(n/1000) + 'k';
+  return '€' + Math.round(n);
+}
+
+function show(id, idx) {
+  document.querySelectorAll('.region-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('#tabs li').forEach((t,i) => t.classList.toggle('active', i === idx));
+}
+
+function buildRegion(id) {
+  const raw = DATA[id];
+  const rows = raw.map(r => ({
+    name: r[0], type: r[1],
+    spend: r[2], total: r[3], target: r[4],
+    spendPct: r[4] > 0 ? r[2] / r[4] : 0,
+    earPct:   r[4] > 0 ? r[3] / r[4] : 0,
+  })).sort((a,b) => b.spendPct - a.spendPct);
+
+  const medals  = ['🥇','🥈','🥉'];
+  const classes = ['gold','silver','bronze'];
+
+  // Podium
+  let podium = '<div class="prizes">'
+    + '<div class="prize"><div class="amt">€1,000</div><div class="pos">1st Place</div></div>'
+    + '<div class="prize"><div class="amt">€600</div><div class="pos">2nd Place</div></div>'
+    + '<div class="prize"><div class="amt">€400</div><div class="pos">3rd Place</div></div>'
+    + '</div><div class="podium">';
+
+  for (let i = 0; i < 3; i++) {
+    const d = rows[i];
+    if (!d) {
+      podium += `<div class="card empty"><div class="c-rank">—</div><div class="c-name">TBD</div></div>`;
+      continue;
+    }
+    const elig = d.earPct >= 1.0;
+    const eligLabel = elig
+      ? '<span class="etag e-ok">✅ Eligible now</span>'
+      : `<span class="etag e-pend">⏳ ${Math.round(d.earPct*100)}% EAR – tracking</span>`;
+
+    podium += `
+      <div class="card ${classes[i]}">
+        <div class="c-rank">${medals[i]}</div>
+        <div class="c-name">${d.name}</div>
+        <div class="c-type">${d.type}</div>
+        <div class="c-lbl">Spend EAR</div>
+        <div class="c-spend">${fmtEUR(d.spend)}</div>
+        <div class="c-lbl">% of EAR Target</div>
+        <div class="c-pct">${(d.spendPct*100).toFixed(1)}%</div>
+        ${eligLabel}
+      </div>`;
+  }
+  podium += '</div>';
+
+  // Full table
+  let table = '<div class="sec-lbl" style="margin-top:4px">All standings</div>'
+    + '<table><thead><tr>'
+    + '<th>#</th><th>SDR</th><th>Spend EAR</th>'
+    + '<th style="min-width:140px">% of Target</th>'
+    + '<th>Total EAR %</th><th title="Eligible (>100% EAR at EOQ)">✅</th>'
+    + '</tr></thead><tbody>';
+
+  rows.forEach((d, i) => {
+    const elig = d.earPct >= 1.0;
+    const barW = Math.min(d.spendPct * 100, 100).toFixed(1);
+    const earCol = d.earPct >= 1 ? '#b5ff3a' : d.earPct >= 0.7 ? '#ffaa00' : '#555';
+    table += `<tr>
+      <td class="r">${i+1}</td>
+      <td class="nm">${d.name}<small>${d.type}</small></td>
+      <td>${fmtEUR(d.spend)}</td>
+      <td>
+        <div class="bar-wrap">
+          <div class="bar"><div class="bar-fill" style="width:${barW}%"></div></div>
+          <div class="pv">${(d.spendPct*100).toFixed(1)}%</div>
+        </div>
+      </td>
+      <td style="color:${earCol};font-size:12px;font-weight:600">${Math.round(d.earPct*100)}%</td>
+      <td><span class="dot ${elig?'ok':'pend'}"></span></td>
+    </tr>`;
+  });
+  table += '</tbody></table>';
+
+  document.getElementById(id).innerHTML = podium + table;
+}
+
+// Build all regions on load
+['dach','uki','growth','scu'].forEach(buildRegion);
+</script>
+</body>
+</html>
